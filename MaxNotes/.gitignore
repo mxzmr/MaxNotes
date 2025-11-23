@@ -10,12 +10,8 @@ DerivedData/
 
 # Xcode workspace user data
 xcuserdata/
-xcshareddata/
 *.xcuserstate
 *.xcuserdatad
-
-# Xcode workspace files (Auto-generated)
-*.xcworkspace/
 
 # Project settings backup
 *.moved-aside
