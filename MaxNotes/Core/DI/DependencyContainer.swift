@@ -13,4 +13,9 @@ struct DependencyContainer {
     ) {
         self.authService = authService
     }
+
+    @MainActor
+    func makeLoginViewModel() -> LoginViewModel {
+        LoginViewModel(authService: authService)
+    }
 }

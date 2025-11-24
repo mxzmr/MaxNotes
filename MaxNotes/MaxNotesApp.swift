@@ -10,14 +10,16 @@ import Firebase
 
 @main
 struct MaxNotesApp: App {
-    
+    private let container: DependencyContainer
+
     init() {
         FirebaseApp.configure()
+        container = DependencyContainer()
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView(container: container)
         }
     }
 }

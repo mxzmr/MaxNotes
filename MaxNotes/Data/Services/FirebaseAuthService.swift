@@ -25,7 +25,7 @@ final class FirebaseAuthService: AuthServiceProtocol {
         userStream = stream
         self.continuation = continuation
         self.currentUser = FirebaseAuthService.mapUser(auth.currentUser)
-
+        
         authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
             guard let self else { return }
             self.currentUser = FirebaseAuthService.mapUser(user)
