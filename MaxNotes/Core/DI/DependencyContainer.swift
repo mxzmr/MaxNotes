@@ -13,9 +13,13 @@ struct DependencyContainer {
     ) {
         self.authService = authService
     }
-
+    
     @MainActor
     func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(authService: authService)
+    }
+    
+    func makeNoteRepository(userId: String) -> NoteRepositoryProtocol {
+        FirestoreNoteRepository(userId: userId)
     }
 }

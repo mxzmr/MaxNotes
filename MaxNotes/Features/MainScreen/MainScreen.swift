@@ -7,6 +7,8 @@
 import SwiftUI
 
 struct MainScreen: View {
+    private let noteRepo: NoteRepositoryProtocol
+    
     var body: some View {
         TabView {
             Text("Notes")
@@ -15,8 +17,12 @@ struct MainScreen: View {
                 .tabItem { Label("Map", systemImage: "map") }
         }
     }
+    
+    init(noteRepo: NoteRepositoryProtocol) {
+        self.noteRepo = noteRepo
+    }
 }
 
 #Preview {
-    MainScreen()
+    MainScreen(noteRepo: MockNoteRepository())
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 enum RootState {
     case loading
-    case loggedIn
+    case loggedIn(NoteRepositoryProtocol)
     case loggedOut
 }
 
@@ -23,8 +23,8 @@ struct RootView: View {
             case .loading:
                 ProgressView("Loading…")
                     .transition(.opacity)
-            case .loggedIn:
-                MainScreen()
+            case .loggedIn(let noteRepo):
+                MainScreen(noteRepo: noteRepo)
                     .transition(.opacity)
             case .loggedOut:
                 LoginView(viewModel: container.makeLoginViewModel())
@@ -32,11 +32,26 @@ struct RootView: View {
             }
         }
         .task {
-            state = container.authService.currentUser != nil ? .loggedIn : .loggedOut
-            for await current in container.authService.userStream {
-                state = current == nil ? .loggedOut : .loggedIn
+            handleUser(container.authService.currentUser)
+            for await user in container.authService.userStream {
+                handleUser(user)
             }
         }
+    }
+    
+    @MainActor
+    private func handleUser(_ user: AppUser?) {
+        guard let user else {
+            state = .loggedOut
+            return
+        }
+        
+        if case .loggedIn(let currentNoteRepo) = state, currentNoteRepo.userId == user.id {
+            return
+        }
+        
+        let noteRepo = container.makeNoteRepository(userId: user.id)
+        state = .loggedIn(noteRepo)
     }
 }
 
