@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C414CAF62ED37A990035783B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C414CAF52ED37A990035783B /* FirebaseAuth */; };
+		C4C5ED422ED4E14900963B40 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C4C5ED412ED4E14900963B40 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C414CAF62ED37A990035783B /* FirebaseAuth in Frameworks */,
+				C4C5ED422ED4E14900963B40 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +73,7 @@
 			name = MaxNotes;
 			packageProductDependencies = (
 				C414CAF52ED37A990035783B /* FirebaseAuth */,
+				C4C5ED412ED4E14900963B40 /* FirebaseFirestore */,
 			);
 			productName = MaxNotes;
 			productReference = C414CAE12ED362F20035783B /* MaxNotes.app */;
@@ -350,6 +353,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C414CAF42ED37A990035783B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		C4C5ED412ED4E14900963B40 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C414CAF42ED37A990035783B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -8,7 +8,8 @@
 import Foundation
 
 protocol NoteRepositoryProtocol {
-    func getStream() -> AsyncStream<[Note]>
+    var userId: String { get }
+    func getStream() -> AsyncThrowingStream<[Note], Error>
     func add(_ note: Note) async throws
     func update(_ note: Note) async throws
     func delete(id: Note.ID) async throws
