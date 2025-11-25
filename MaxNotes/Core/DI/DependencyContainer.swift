@@ -23,13 +23,18 @@ struct DependencyContainer {
     }
 
     @MainActor
-    func makeListVM(noteRepo: NoteRepositoryProtocol) -> ListViewModel {
+    func makeListViewModel(noteRepo: NoteRepositoryProtocol) -> ListViewModel {
         ListViewModel(noteRepo: noteRepo)
     }
 
     @MainActor
-    func makeMapVM(noteRepo: NoteRepositoryProtocol) -> MapViewModel {
+    func makeMapViewModel(noteRepo: NoteRepositoryProtocol) -> MapViewModel {
         MapViewModel(noteRepo: noteRepo, locationService: locationService)
+    }
+    
+    @MainActor
+    func makeNoteEditorViewModel(noteRepo: NoteRepositoryProtocol, note: Note? = nil) -> NoteEditorViewModel {
+        NoteEditorViewModel(noteRepo: noteRepo, locationService: locationService, note: note)
     }
     
     func makeNoteRepository(userId: String) -> NoteRepositoryProtocol {
