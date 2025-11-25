@@ -26,16 +26,31 @@ struct MainView: View {
     var body: some View {
         TabView {
             Group {
-                NoteListView(
-                    viewModel: listViewModel,
-                    onSelect: { note in openEditor(note: note) }
-                )
+                NavigationStack {
+                    NoteListView(
+                        viewModel: listViewModel,
+                        onSelect: { note in openEditor(note: note) },
+                        onLogout: logout
+                    )
+                    .navigationTitle("Welcome to MaxNotes")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(role: .destructive) {
+                                logout()
+                            } label: {
+                                Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
+                            }
+                            .tint(.red)
+                        }
+                    }
+                }
                 .tabItem { Label("Notes", systemImage: "list.bullet") }
-                .navigationTitle("Notes")
                 
                 NoteMapView(
                     viewModel: mapViewModel,
-                    onSelect: { note in openEditor(note: note) }
+                    onSelect: { note in openEditor(note: note) },
+                    onLogout: logout
                 )
                 .tabItem { Label("Map", systemImage: "map") }
             }
@@ -57,6 +72,14 @@ struct MainView: View {
     private func openEditor(note: Note? = nil) {
         noteViewModel.setNote(note)
         isShowingEditor = true
+    }
+    
+    private func logout() {
+        do {
+            try container.authService.logout()
+        } catch {
+            Log.general.error("Failed to logout: \(error)")
+        }
     }
 }
 

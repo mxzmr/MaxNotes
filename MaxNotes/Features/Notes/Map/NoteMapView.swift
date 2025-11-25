@@ -11,65 +11,63 @@ import Observation
 import SwiftUI
 
 struct NoteMapView: View {
-    @State private var viewModel: MapViewModel
-    
+    @Bindable private var viewModel: MapViewModel
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var hasCenteredOnUser = false
     
     private let onSelect: (Note) -> Void
+    private let onLogout: () -> Void
     
     init(
         viewModel: MapViewModel,
-        onSelect: @escaping (Note) -> Void
+        onSelect: @escaping (Note) -> Void,
+        onLogout: @escaping () -> Void
     ) {
-        _viewModel = State(initialValue: viewModel)
+        self.viewModel = viewModel
         self.onSelect = onSelect
+        self.onLogout = onLogout
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .topLeading) {
-                Map(position: $cameraPosition) {
-                    if viewModel.userLocation != nil {
-                        UserAnnotation()
-                    }
-                    
-                    ForEach(viewModel.notes) { note in
-                        if let location = note.location {
-                            Annotation(note.title, coordinate: location.coordinate) {
-                                Button {
-                                    onSelect(note)
-                                } label: {
-                                    VStack(spacing: 4) {
-                                        Image(systemName: "note.text")
-                                            .foregroundStyle(.white)
-                                            .padding(8)
-                                            .background(Color.blue, in: Circle())
-                                        Text(note.title)
-                                            .font(.footnote.weight(.semibold))
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 4)
-                                            .background(.thinMaterial, in: Capsule())
-                                    }
+        ZStack(alignment: .topLeading) {
+            Map(position: $cameraPosition) {
+                if viewModel.userLocation != nil {
+                    UserAnnotation()
+                }
+                
+                ForEach(viewModel.notes) { note in
+                    if let location = note.location {
+                        Annotation(note.title, coordinate: location.coordinate) {
+                            Button {
+                                onSelect(note)
+                            } label: {
+                                VStack(spacing: 4) {
+                                    Image(systemName: "note.text")
+                                        .foregroundStyle(.white)
+                                        .padding(8)
+                                        .background(Color.blue, in: Circle())
+                                    Text(note.title)
+                                        .font(.footnote.weight(.semibold))
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 4)
+                                        .background(.thinMaterial, in: Capsule())
                                 }
-                                .buttonStyle(.plain)
                             }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
-                .ignoresSafeArea(edges: .bottom)
-                .mapControls {
-                    MapUserLocationButton()
-                }
-                .onChange(of: viewModel.userLocation) { _, newLocation in
-                    guard let newLocation, hasCenteredOnUser == false else { return }
-                    hasCenteredOnUser = true
-                    cameraPosition = .region(.init(center: newLocation.coordinate, span: .init(latitudeDelta: 0.02, longitudeDelta: 0.02)))
-                }
-                
-                statusOverlay
             }
-            .navigationTitle("Map")
+            .ignoresSafeArea(edges: .bottom)
+            .mapControls {
+                MapUserLocationButton()
+            }
+            .onChange(of: viewModel.userLocation) { _, newLocation in
+                guard let newLocation, hasCenteredOnUser == false else { return }
+                hasCenteredOnUser = true
+                cameraPosition = .region(.init(center: newLocation.coordinate, span: .init(latitudeDelta: 0.02, longitudeDelta: 0.02)))
+            }
+            statusOverlay
         }
         .task {
             async let _ = viewModel.loadUserLocation()
@@ -115,6 +113,7 @@ private extension NoteMapView {
 #Preview {
     NoteMapView(
         viewModel: MapViewModel(noteRepo: MockNoteRepository(), locationService: MockLocationService()),
-        onSelect: { _ in }
+        onSelect: { _ in },
+        onLogout: {}
     )
 }

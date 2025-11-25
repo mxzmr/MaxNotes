@@ -8,31 +8,26 @@
 import SwiftUI
 
 struct NoteListView: View {
-    @State private var viewModel: ListViewModel
+    @Bindable var viewModel: ListViewModel
     
     private let onSelect: (Note) -> Void
+    private let onLogout: () -> Void
     
     init(
         viewModel: ListViewModel,
-        onSelect: @escaping (Note) -> Void
+        onSelect: @escaping (Note) -> Void,
+        onLogout: @escaping () -> Void
     ) {
-        _viewModel = State(initialValue: viewModel)
+        self.viewModel = viewModel
         self.onSelect = onSelect
+        self.onLogout = onLogout
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                welcomeMessage
-                    .listRowInsets(.init(top: 12, leading: 0, bottom: 6, trailing: 0))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                
-                listContent
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Notes")
+        List {
+            listContent
         }
+        .listStyle(.insetGrouped)
         .task { await viewModel.observeNotes() }
     }
 }
@@ -59,28 +54,6 @@ private extension NoteListView {
                 .buttonStyle(.plain)
             }
         }
-    }
-    
-    var welcomeMessage: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Welcome to MaxNotes")
-                .font(.system(.title2, design: .rounded))
-                .fontWeight(.semibold)
-            
-            Text("Capture your thoughts and keep everything in sync.")
-                .foregroundStyle(.secondary)
-                .font(.subheadline)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.18), Color.cyan.opacity(0.12)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
     
     func noteRow(_ note: Note) -> some View {
@@ -123,7 +96,8 @@ private extension NoteListView {
     NavigationStack {
         NoteListView(
             viewModel: ListViewModel(noteRepo: MockNoteRepository()),
-            onSelect: { _ in }
+            onSelect: { _ in },
+            onLogout: {}
         )
     }
 }
