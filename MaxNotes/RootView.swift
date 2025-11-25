@@ -24,7 +24,7 @@ struct RootView: View {
                 ProgressView("Loading…")
                     .transition(.opacity)
             case .loggedIn(let noteRepo):
-                MainScreen(noteRepo: noteRepo)
+                MainView(container: container, noteRepo: noteRepo)
                     .transition(.opacity)
             case .loggedOut:
                 LoginView(viewModel: container.makeLoginViewModel())
@@ -46,7 +46,8 @@ struct RootView: View {
             return
         }
         
-        if case .loggedIn(let currentNoteRepo) = state, currentNoteRepo.userId == user.id {
+        if case .loggedIn(let currentNoteRepo) = state,
+           currentNoteRepo.userId == user.id {
             return
         }
         
