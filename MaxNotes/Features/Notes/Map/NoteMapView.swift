@@ -16,10 +16,14 @@ struct NoteMapView: View {
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var hasCenteredOnUser = false
     
+    private let onSelect: (Note) -> Void
+    
     init(
         viewModel: MapViewModel,
+        onSelect: @escaping (Note) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
+        self.onSelect = onSelect
     }
     
     var body: some View {
@@ -33,17 +37,22 @@ struct NoteMapView: View {
                     ForEach(viewModel.notes) { note in
                         if let location = note.location {
                             Annotation(note.title, coordinate: location.coordinate) {
-                                VStack(spacing: 4) {
-                                    Image(systemName: "note.text")
-                                        .foregroundStyle(.white)
-                                        .padding(8)
-                                        .background(Color.blue, in: Circle())
-                                    Text(note.title)
-                                        .font(.footnote.weight(.semibold))
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 4)
-                                        .background(.thinMaterial, in: Capsule())
+                                Button {
+                                    onSelect(note)
+                                } label: {
+                                    VStack(spacing: 4) {
+                                        Image(systemName: "note.text")
+                                            .foregroundStyle(.white)
+                                            .padding(8)
+                                            .background(Color.blue, in: Circle())
+                                        Text(note.title)
+                                            .font(.footnote.weight(.semibold))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 4)
+                                            .background(.thinMaterial, in: Capsule())
+                                    }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -105,6 +114,7 @@ private extension NoteMapView {
 
 #Preview {
     NoteMapView(
-        viewModel: MapViewModel(noteRepo: MockNoteRepository(), locationService: MockLocationService())
+        viewModel: MapViewModel(noteRepo: MockNoteRepository(), locationService: MockLocationService()),
+        onSelect: { _ in }
     )
 }

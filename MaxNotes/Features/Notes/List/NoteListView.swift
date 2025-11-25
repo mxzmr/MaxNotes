@@ -10,8 +10,14 @@ import SwiftUI
 struct NoteListView: View {
     @State private var viewModel: ListViewModel
     
-    init(viewModel: ListViewModel) {
+    private let onSelect: (Note) -> Void
+    
+    init(
+        viewModel: ListViewModel,
+        onSelect: @escaping (Note) -> Void
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onSelect = onSelect
     }
     
     var body: some View {
@@ -43,7 +49,14 @@ private extension NoteListView {
             statusRow(text: "Start adding notes to see them here.", icon: "square.and.pencil")
         } else {
             ForEach(viewModel.notes) { note in
-                noteRow(note)
+                Button {
+                    onSelect(note)
+                } label: {
+                    noteRow(note)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -84,9 +97,9 @@ private extension NoteListView {
             }
             
             HStack(spacing: 8) {
-                Image(systemName: "clock.arrow.circlepath")
+                Image(systemName: "calendar")
                     .foregroundStyle(.secondary)
-                Text(note.updatedAt, style: .relative)
+                Text(note.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -109,7 +122,8 @@ private extension NoteListView {
 #Preview {
     NavigationStack {
         NoteListView(
-            viewModel: ListViewModel(noteRepo: MockNoteRepository())
+            viewModel: ListViewModel(noteRepo: MockNoteRepository()),
+            onSelect: { _ in }
         )
     }
 }
