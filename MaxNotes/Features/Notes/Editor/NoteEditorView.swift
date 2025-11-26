@@ -5,12 +5,14 @@
 //  Created by Max zam on 25/11/2025.
 //
 
+import PhotosUI
 import SwiftUI
 
 struct NoteEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: NoteEditorViewModel
     @FocusState private var focusedField: Field?
+    @State private var selectedPhoto: PhotosPickerItem?
     
     private enum Field {
         case title
@@ -43,6 +45,8 @@ struct NoteEditorView: View {
                         .scrollContentBackground(.hidden)
                 }
             }
+            
+            imageSection
             
             if let error = viewModel.errorMessage {
                 Section {
@@ -91,6 +95,11 @@ struct NoteEditorView: View {
             if viewModel.isNew {
                 focusedField = .title
             }
+            await viewModel.loadPreviewIfNeeded()
+        }
+        .onChange(of: selectedPhoto) { _, newValue in
+            Task { await viewModel.loadSelectedPhoto(newValue) }
+            selectedPhoto = nil
         }
     }
     
@@ -107,6 +116,48 @@ struct NoteEditorView: View {
             dismiss()
         }
     }
+    
+    @ViewBuilder
+    private var imageSection: some View {
+        Section("Image") {
+            if let data = viewModel.imageData, let preview = UIImage(data: data) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Image(uiImage: preview)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    
+                    HStack {
+                        attachButton
+                        Spacer()
+                        Button("Remove", role: .destructive) {
+                            Task { await viewModel.removeImage() }
+                        }
+                        .disabled(!viewModel.hasImage)
+                    }
+                }
+            } else if viewModel.hasImage {
+                VStack(alignment: .leading, spacing: 8) {
+                    attachButton
+                    Button("Remove", role: .destructive) {
+                        Task { await viewModel.removeImage() }
+                    }
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    attachButton
+                }
+            }
+        }
+    }
+    
+    private var attachButton: some View {
+        PhotosPicker(selection: $selectedPhoto, matching: .images) {
+            Label("Choose from Photos", systemImage: "photo.on.rectangle")
+        }
+    }
+    
 }
 
 
@@ -115,7 +166,8 @@ struct NoteEditorView: View {
         NoteEditorView(
             viewModel: NoteEditorViewModel(
                 noteRepo: MockNoteRepository(),
-                locationService: MockLocationService()
+                locationService: MockLocationService(),
+                imageStorage: MockImageStorage()
             )
         )
     }
