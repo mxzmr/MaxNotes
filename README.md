@@ -73,6 +73,15 @@ Password reset, email verification, and OAuth providers are not implemented, and
 - The project expects a valid `GoogleService-Info.plist` at `MaxNotes/GoogleService-Info.plist`. This repo currently commits a development configuration;
 - Run on a simulator or device with location services and Photos access enabled for the best experience.
 
+## Use of AI Tools
+I used AI tools (ChatGPT and Gemini) as a supportive assistant for planning and code reviews. The core architecture, data flow, and business logic were designed and implemented by me; AI was used mainly for review, refinement, and boilerplate reduction.
+
+- **Planning & architecture** – I drafted the layered architecture (DI container, view models, Firestore streams) myself, then used AI to review the structure, challenge assumptions, and surface potential edge cases.
+- **UI/UX review** – I requested feedback on layout ergonomics and platform-consistent patterns to keep the app feeling native to iOS.
+- **Code review & quality checks** – I used AI for code reviews to find edge cases and potential issues I missed.
+- **Utility functions** – I used AI for small helper snippets (e.g. image compression helpers, file manager utilities) to reduce boilerplate.
+- **Documentation** – AI assisted in refining the structure and clarity of this README; the underlying content, architecture, and implementation decisions remain my own.
+
 ## Future Improvements
 - Replace the manual `DependencyContainer` with Swinject or Point-Free’s `swift-dependencies` for more composable, testable feature modules.
 - Improve location/map UX (onboarding for permissions, explicit "center on me" button, clearer error states).
