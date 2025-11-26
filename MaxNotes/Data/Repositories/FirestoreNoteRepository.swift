@@ -55,7 +55,7 @@ final class FirestoreNoteRepository: NoteRepositoryProtocol {
     }
     
     func update(_ note: Note) async throws {
-        try await save(note, merge: true)
+        try await save(note, merge: false)
     }
     
     func delete(id: Note.ID) async throws {

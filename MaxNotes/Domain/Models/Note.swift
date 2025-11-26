@@ -12,14 +12,16 @@ struct Note: Codable, Identifiable {
     var title: String
     var content: String
     var location: NoteLocation?
+    var imagePath: String?
     var createdAt: Date
     var updatedAt: Date
-
+    
     init(
         id: String = UUID().uuidString,
         title: String,
         content: String,
         location: NoteLocation? = nil,
+        imagePath: String? = nil,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
     ) {
@@ -27,6 +29,7 @@ struct Note: Codable, Identifiable {
         self.title = title
         self.content = content
         self.location = location
+        self.imagePath = imagePath
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
