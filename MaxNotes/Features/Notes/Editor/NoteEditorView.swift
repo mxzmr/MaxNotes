@@ -60,13 +60,21 @@ struct NoteEditorView: View {
                     Button(role: .destructive) {
                         Task { await handleDelete() }
                     } label: {
-                        HStack {
+                        ZStack {
+                            Text("Delete Note")
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
                             if viewModel.isDeleting {
                                 ProgressView()
                             }
-                            Text("Delete Note")
                         }
                     }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red)
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                     .disabled(viewModel.isDeleting || viewModel.isSaving)
                 }
             }
@@ -121,41 +129,38 @@ struct NoteEditorView: View {
     private var imageSection: some View {
         Section("Image") {
             if let data = viewModel.imageData, let preview = UIImage(data: data) {
-                VStack(alignment: .leading, spacing: 10) {
+                photoPicker {
                     Image(uiImage: preview)
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    
-                    HStack {
-                        attachButton
-                        Spacer()
-                        Button("Remove", role: .destructive) {
-                            Task { await viewModel.removeImage() }
-                        }
-                        .disabled(!viewModel.hasImage)
-                    }
+                        .contentShape(Rectangle())
                 }
-            } else if viewModel.hasImage {
-                VStack(alignment: .leading, spacing: 8) {
-                    attachButton
+            }
+            HStack {
+                attachButton
+                    .buttonStyle(.plain)
+                Spacer()
+                if viewModel.hasImage {
                     Button("Remove", role: .destructive) {
                         Task { await viewModel.removeImage() }
                     }
-                }
-            } else {
-                VStack(alignment: .leading, spacing: 8) {
-                    attachButton
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.red)
                 }
             }
         }
     }
     
     private var attachButton: some View {
-        PhotosPicker(selection: $selectedPhoto, matching: .images) {
+        photoPicker {
             Label("Choose from Photos", systemImage: "photo.on.rectangle")
         }
+    }
+    
+    private func photoPicker<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        PhotosPicker(selection: $selectedPhoto, matching: .images, label: content)
     }
     
 }
